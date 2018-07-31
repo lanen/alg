@@ -24,7 +24,7 @@ public class SlotGenerater {
 
         Slot[] bars = new Slot[len];
         for (int i = 0; i < bars.length; i++) {
-            bars[i] = new SimpleSlot(i,random.nextInt(100));
+            bars[i] = new SimpleSlot(i,1 + random.nextInt(99));
         }
         return bars;
     }

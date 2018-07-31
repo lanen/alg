@@ -14,6 +14,8 @@ public abstract class AbstractSortInterface implements SortInterface, SortAction
 
     private boolean step = true;
 
+    protected boolean sorted = false;
+
     public void swap(Slot[] slots, int left, int right) {
         Slot temp = slots[left];
         slots[left] = slots[right];
@@ -22,6 +24,7 @@ public abstract class AbstractSortInterface implements SortInterface, SortAction
         slots[left].updatePosition(left);
         slots[right].updatePosition(right);
     }
+
 
     /**
      * 设计是否 单步 排序
@@ -35,7 +38,7 @@ public abstract class AbstractSortInterface implements SortInterface, SortAction
     }
 
     @Override
-    public void stop() {
+    public void pause() {
         if (!step) return;
         try {
             semaphore.acquire();
@@ -45,8 +48,13 @@ public abstract class AbstractSortInterface implements SortInterface, SortAction
     }
 
     @Override
-    public void next() {
+    public void resume() {
         if (!step) return;
         semaphore.release(1);
+    }
+
+    @Override
+    public boolean sorted() {
+        return sorted;
     }
 }

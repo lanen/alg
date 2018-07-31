@@ -1,5 +1,5 @@
-import sorting.control.BubbleSort;
-import sorting.ui.Page;
+import sorting.ui.LeftPanel;
+import sorting.ui.PageControl;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,14 +11,14 @@ import java.awt.*;
  */
 public class SortingUI {
 
-
     public static void main(String[] args) {
         JFrame jFrame = new JFrame();
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         jFrame.setLayout(new BorderLayout());
         jFrame.setSize(600,400);
 
-        Page page = new Page(jFrame, BubbleSort.class.getName());
+        PageControl pageControl = new PageControl(jFrame);
+        jFrame.add(new LeftPanel(pageControl), BorderLayout.WEST);
 
         jFrame.setVisible(true);
 

@@ -8,11 +8,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
- * 排序的UI呈现
+ *
  * @author evan
  * create-date 2018/7/31
  */
@@ -26,28 +25,34 @@ public class Page {
 
     private SortInterface sortInterface;
 
-    private JButton button = new JButton();
+    private JButton button;
+
+    private ExecutorService executorService;
+
+    private ExecutorService working;
 
     /**
      *
-     * @param jFrame
+     * @param jFrame frame
+     * @param className class name
      */
     public Page(JFrame jFrame, String className) {
 
         this.jFrame = jFrame;
         this.sortClassName = className;
 
+
+        this.sortInterface = createSortInterface(this.sortClassName);
+        if (null == sortInterface){
+            return;
+        }
         SlotGenerater generater = new SlotGenerater();
         Slot[] slots = generater.generate(20);
 
         this.sortPanel = new SortPanel(slots);
 
-        this.jFrame.add(sortPanel, BorderLayout.CENTER);
-
         // 排序线程
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        this.sortInterface = createSortInterface(this.sortClassName);
-
+        executorService = Executors.newSingleThreadExecutor();
         executorService.execute(new Runnable() {
             @Override
             public void run() {
@@ -57,26 +62,72 @@ public class Page {
 
 
         // 按钮控制线程
-        ExecutorService working = Executors.newSingleThreadExecutor();
+        working = Executors.newSingleThreadExecutor();
 
-        JButton button = new JButton();
-        button.setText("Step");
-        button.addActionListener(new ActionListener(){
+        this.button = new JButton();
+        this.button.setText("Step");
+        this.button.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
                 working.submit(new Runnable() {
                     @Override
                     public void run() {
-                        if (null != sortInterface){
-                            sortInterface.next();
-                        }
-                        sortPanel.repaint();
+                        actionStep();
                     }
                 });
             }
         });
 
-        jFrame.add(button,BorderLayout.SOUTH);
+        this.jFrame.add(this.sortPanel, BorderLayout.CENTER);
+        this.jFrame.add(this.button, BorderLayout.SOUTH);
+
+        this.jFrame.revalidate();
+    }
+
+    private void actionStep(){
+        if (null != sortInterface){
+            sortInterface.resume();
+        }
+        if (null != sortPanel){
+            sortPanel.repaint();
+        }
+    }
+    private ScheduledExecutorService ses;
+    /**
+     *
+     * @param period
+     */
+    public void autoActionStep(int period){
+
+        ses = Executors.newSingleThreadScheduledExecutor();
+        ses.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                actionStep();
+                if (sortInterface.sorted()){
+                    ses.shutdown();
+                }
+            }
+        }, 200, period, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     *
+     */
+    public void dispose(){
+
+        if (null != this.sortPanel){
+            this.sortPanel.invalidate();
+            this.sortPanel.setVisible(false);
+            this.sortPanel.removeAll();
+            this.jFrame.getContentPane().remove(this.sortPanel);
+            this.jFrame.getContentPane().remove(this.button);
+        }
+        this.sortPanel = null;
+        this.button = null;
+
+        this.working.shutdown();
+        this.executorService.shutdown();
     }
 
     /**

@@ -6,12 +6,14 @@ import sorting.ui.SortPanel;
 /**
  *
  */
-public interface SortInterface  extends SortAction{
+public interface SortInterface  extends SortAction {
 
     /**
      *
      * @param bars
      */
     void sort(Slot[] bars);
+
+    boolean sorted();
 
 }

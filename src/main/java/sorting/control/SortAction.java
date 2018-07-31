@@ -5,7 +5,14 @@ package sorting.control;
  * create-date 2018/7/31
  */
 public interface SortAction {
-    void stop();
 
-    void next();
+    /**
+     * 暂停
+     */
+    void pause();
+
+    /**
+     * 继续
+     */
+    void resume();
 }
