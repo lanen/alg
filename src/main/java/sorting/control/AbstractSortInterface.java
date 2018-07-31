@@ -12,7 +12,7 @@ public abstract class AbstractSortInterface implements SortInterface, SortAction
 
     private Semaphore semaphore = new Semaphore(0);
 
-    private boolean step = false;
+    private boolean step = true;
 
     public void swap(Slot[] slots, int left, int right) {
         Slot temp = slots[left];
