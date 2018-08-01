@@ -30,7 +30,7 @@ public class PageControl {
             current.dispose();
         }
 
-        current = new Page(jFrame, "sorting.control." + name);
+        current = new Page(jFrame, "sorting.alg." + name);
         //决定是否自动
         if (autoStep){
             current.autoActionStep(stepPeriod);

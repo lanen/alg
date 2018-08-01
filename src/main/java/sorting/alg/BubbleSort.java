@@ -1,9 +1,10 @@
-package sorting.control;
+package sorting.alg;
 
 import sorting.Slot;
-
 /**
- *
+ * 冒泡排序
+ * @author evan
+ * create-date 2018/7/31
  */
 public class BubbleSort extends AbstractSortInterface {
 

@@ -1,6 +1,8 @@
-package sorting.control;
+package sorting.alg;
 
 import sorting.Slot;
+import sorting.control.SortAction;
+import sorting.control.SortInterface;
 
 import java.util.concurrent.Semaphore;
 

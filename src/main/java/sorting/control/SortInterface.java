@@ -1,7 +1,6 @@
 package sorting.control;
 
 import sorting.Slot;
-import sorting.ui.SortPanel;
 
 /**
  *
@@ -10,9 +9,9 @@ public interface SortInterface  extends SortAction {
 
     /**
      *
-     * @param bars
+     * @param slots
      */
-    void sort(Slot[] bars);
+    void sort(Slot[] slots);
 
     boolean sorted();
 

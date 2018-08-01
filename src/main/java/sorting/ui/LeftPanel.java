@@ -15,7 +15,11 @@ public class LeftPanel extends JPanel {
 
     static String[] ITEMS = {
             "BubbleSort",
-//            "QuickSort"
+            "QuickSort",
+            "SelectionSort",
+            "InsertionSort",
+            "ShellInsertionSort",
+            "MergeSort",
     };
 
     /**
