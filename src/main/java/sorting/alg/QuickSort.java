@@ -10,11 +10,8 @@ import sorting.Slot;
 public class QuickSort extends AbstractSortInterface{
 
     @Override
-    public void sort(Slot[] slots) {
-        pause();
+    public void doSort(Slot[] slots) {
         quickSort(slots,0,slots.length-1);
-        //排序完成
-        sorted = true;
     }
 
     /**

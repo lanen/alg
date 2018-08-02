@@ -9,8 +9,7 @@ import sorting.Slot;
 public class ShellInsertionSort extends AbstractSortInterface{
 
     @Override
-    public void sort(Slot[] slots) {
-        pause();
+    public void doSort(Slot[] slots) {
 
         for(int group = slots.length/ 2 ; group > 0 ; group = group/2 ){
             for (int i = group; i < slots.length; i ++){
@@ -22,7 +21,5 @@ public class ShellInsertionSort extends AbstractSortInterface{
                 }
             }
         }
-
-        sorted = true;
     }
 }

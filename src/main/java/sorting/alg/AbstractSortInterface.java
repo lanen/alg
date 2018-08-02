@@ -7,18 +7,24 @@ import sorting.control.SortInterface;
 import java.util.concurrent.Semaphore;
 
 /**
+ *
  * @author evan
  * create-date 2018/7/31
  */
 public abstract class AbstractSortInterface implements SortInterface, SortAction {
 
+    /**
+     * 用信号控制调度，从而触发动画
+     */
     private Semaphore semaphore = new Semaphore(0);
 
     private boolean step = true;
 
     protected boolean sorted = false;
 
-    public void swap(Slot[] slots, int left, int right) {
+    protected boolean exit  = false;
+
+    protected void swap(Slot[] slots, int left, int right) {
         Slot temp = slots[left];
         slots[left] = slots[right];
         slots[right] = temp;
@@ -27,6 +33,19 @@ public abstract class AbstractSortInterface implements SortInterface, SortAction
         slots[right].updatePosition(right);
     }
 
+    protected abstract void doSort(Slot[] slots);
+
+    @Override
+    public void sort(Slot[] slots) {
+        sorted = false;
+        exit = false;
+        pause();
+        try{
+            doSort(slots);
+        }finally {
+            sorted = true;
+        }
+    }
 
     /**
      * 设计是否 单步 排序
@@ -41,7 +60,12 @@ public abstract class AbstractSortInterface implements SortInterface, SortAction
 
     @Override
     public void pause() {
-        if (!step) return;
+        if (!step) {
+            return;
+        }
+        if (this.exit){
+            return;
+        }
         try {
             semaphore.acquire();
         } catch (InterruptedException e) {
@@ -56,7 +80,15 @@ public abstract class AbstractSortInterface implements SortInterface, SortAction
     }
 
     @Override
+    public void resumeAndExit() {
+        this.exit = true;
+        semaphore.release(1);
+
+    }
+
+    @Override
     public boolean sorted() {
         return sorted;
     }
+
 }

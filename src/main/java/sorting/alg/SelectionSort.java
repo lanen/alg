@@ -10,8 +10,7 @@ import sorting.Slot;
 public class SelectionSort extends AbstractSortInterface {
 
     @Override
-    public void sort(Slot[] slots) {
-        pause();
+    public void doSort(Slot[] slots) {
 
         int i;        // 有序区的末尾位置
         int j;        // 无序区的起始位置
@@ -30,7 +29,5 @@ public class SelectionSort extends AbstractSortInterface {
                 pause();
             }
         }
-
-        sorted = true;
     }
 }

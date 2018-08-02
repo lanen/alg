@@ -1,6 +1,7 @@
 package sorting.ui;
 
 import sorting.Slot;
+import sorting.config.SlotConst;
 import sorting.control.SlotGenerater;
 import sorting.control.SortInterface;
 
@@ -8,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.*;
 
 /**
@@ -18,58 +21,71 @@ import java.util.concurrent.*;
 public class Page {
 
     private JFrame jFrame;
-
+    private JButton button;
     private SortPanel sortPanel;
 
+    /**
+     * 排序的界面
+     */
+    private String uiName;
+
+    /**
+     * 排序类
+     */
     private String sortClassName;
 
     private SortInterface sortInterface;
 
-    private JButton button;
+    /**
+     *
+     */
+    private SlotGenerater generater = new SlotGenerater();
 
-    private ExecutorService executorService;
-
-    private ExecutorService working;
+    /**
+     * 动画任务
+     */
+    private ScheduledFuture<?> scheduledFuture;
 
     /**
      *
-     * @param jFrame frame
+     * @param pageControl pageControl
      * @param className class name
      */
-    public Page(JFrame jFrame, String className) {
+    public Page(PageControl pageControl, String className) {
+        this(pageControl, className,"default");
+    }
 
-        this.jFrame = jFrame;
+    /**
+     *
+     * @param pageControl
+     * @param className
+     * @param uiName
+     */
+    public Page(PageControl pageControl, String className, String uiName) {
+        this.jFrame = pageControl.getjFrame();
         this.sortClassName = className;
+        this.uiName = uiName;
+        this.init();
+    }
 
+
+    /**
+     * 初始化
+     */
+    private void init(){
 
         this.sortInterface = createSortInterface(this.sortClassName);
         if (null == sortInterface){
             return;
         }
-        SlotGenerater generater = new SlotGenerater();
-        Slot[] slots = generater.generate(20);
-
-        this.sortPanel = new SortPanel(slots);
-
-        // 排序线程
-        executorService = Executors.newSingleThreadExecutor();
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                sortInterface.sort(slots);
-            }
-        });
-
-
-        // 按钮控制线程
-        working = Executors.newSingleThreadExecutor();
+        this.sortPanel = createSlotPanel(this.uiName);
 
         this.button = new JButton();
         this.button.setText("Step");
         this.button.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                working.submit(new Runnable() {
+                PageControl.SINGLE_STEP_THREAD.submit(new Runnable() {
                     @Override
                     public void run() {
                         actionStep();
@@ -82,6 +98,7 @@ public class Page {
         this.jFrame.add(this.button, BorderLayout.SOUTH);
 
         this.jFrame.revalidate();
+
     }
 
     private void actionStep(){
@@ -92,29 +109,57 @@ public class Page {
             sortPanel.repaint();
         }
     }
-    private ScheduledExecutorService ses;
+
+
     /**
      *
      * @param period
      */
     public void autoActionStep(int period){
 
-        ses = Executors.newSingleThreadScheduledExecutor();
-        ses.scheduleAtFixedRate(new Runnable() {
+        stopScheduledFuture();
+
+        if(null != PageControl.SORTINT_THREAD){
+            PageControl.SORTINT_THREAD.execute(new Runnable() {
+                @Override
+                public void run() {
+                    sortPanel.setBars(generater.generate(SlotConst.SLOT_NUM));
+                    sortInterface.sort(sortPanel.getBars());
+                }
+            });
+        }
+
+        if (null == PageControl.AUTO_STEP_SORTING_THREAD){
+            return;
+        }
+
+        scheduledFuture = PageControl.AUTO_STEP_SORTING_THREAD.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 actionStep();
+
                 if (sortInterface.sorted()){
-                    ses.shutdown();
+                    stopScheduledFuture();
                 }
             }
         }, 200, period, TimeUnit.MILLISECONDS);
     }
 
     /**
+     * 停止动画
+     */
+    private void stopScheduledFuture(){
+        if (null != scheduledFuture){
+            sortInterface.resumeAndExit();
+            scheduledFuture.cancel(true);
+            scheduledFuture = null;
+        }
+    }
+    /**
      *
      */
     public void dispose(){
+        stopScheduledFuture();
 
         if (null != this.sortPanel){
             this.sortPanel.invalidate();
@@ -125,9 +170,6 @@ public class Page {
         }
         this.sortPanel = null;
         this.button = null;
-
-        this.working.shutdown();
-        this.executorService.shutdown();
     }
 
     /**
@@ -147,6 +189,37 @@ public class Page {
             } catch (InstantiationException e) {
                 e.printStackTrace();
             }
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @param panelName
+     * @return
+     */
+    private SortPanel createSlotPanel(String panelName){
+        String name = "sorting.ui.SortPanel";
+        if (  "bucketsort".equalsIgnoreCase(panelName)){
+            name = "sorting.ui.BucketSortPanel";
+        }
+        Slot[] slots = generater.generate(SlotConst.SLOT_NUM);
+        try {
+            Class<?> aClass = Class.forName(name);
+            Constructor<?> constructor = aClass.getConstructor(new Slot[]{}.getClass());
+            return (SortPanel) constructor.newInstance(new Object[]{
+                    slots
+            });
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
         }
         return null;
     }

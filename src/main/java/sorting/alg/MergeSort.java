@@ -9,12 +9,8 @@ import sorting.Slot;
 public class MergeSort extends AbstractSortInterface{
 
     @Override
-    public void sort(Slot[] slots) {
-        pause();
-
+    public void doSort(Slot[] slots) {
         mergeSortUp2Down(slots, 0 , slots.length-1);
-
-        sorted = true;
     }
 
     private void merge(Slot[] slots, int start, int mid, int end){

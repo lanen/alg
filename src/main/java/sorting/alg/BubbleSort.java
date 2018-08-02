@@ -9,8 +9,7 @@ import sorting.Slot;
 public class BubbleSort extends AbstractSortInterface {
 
     @Override
-    public void sort(Slot[] slots) {
-        pause();
+    public void doSort(Slot[] slots) {
         for(int i = 0; i <slots.length; i++){
             for (int j = 0; j <slots.length - i - 1; j++){
                 if( slots[j].getValue() > slots[j+1].getValue() ){
@@ -19,7 +18,5 @@ public class BubbleSort extends AbstractSortInterface {
                 }
             }
         }
-        //排序完成
-        sorted = true;
     }
 }

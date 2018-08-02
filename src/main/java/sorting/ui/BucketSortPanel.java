@@ -3,19 +3,18 @@ package sorting.ui;
 import sorting.Slot;
 import sorting.config.SlotConst;
 
-import javax.swing.*;
 import java.awt.*;
 
 /**
  * @author evan
  * create-date 2018/7/31
  */
-public class SortPanel extends JPanel {
+public class BucketSortPanel extends SortPanel {
 
     private Slot[] bars;
 
-    public SortPanel(Slot[] bars) {
-        this.bars = bars;
+    public BucketSortPanel(Slot[] bars) {
+        super(bars);
     }
 
     @Override
@@ -25,13 +24,5 @@ public class SortPanel extends JPanel {
             g.setColor(bars[i].getColor());
             g.fillRect(bars[i].x(SlotConst.UI_START_X), bars[i].y(SlotConst.UI_START_Y), bars[i].width(), bars[i].height());
         }
-    }
-
-    public Slot[] getBars() {
-        return bars;
-    }
-
-    public void setBars(Slot[] bars) {
-        this.bars = bars;
     }
 }
