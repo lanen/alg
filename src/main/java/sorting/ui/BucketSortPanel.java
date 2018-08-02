@@ -53,7 +53,7 @@ public class BucketSortPanel extends SortPanel {
     private void drawBucket(Slot slot, Graphics g){
 
         x = slot.x(SlotConst.UI_START_X);
-        y = slot.y(SlotConst.UI_START_Y+50);
+        y = slot.y(SlotConst.UI_START_Y + 50);
         w = slot.width();
         h = slot.height();
 
@@ -62,7 +62,7 @@ public class BucketSortPanel extends SortPanel {
         g.drawString(String.valueOf(slot.getPosition()),x + SimpleBucketSlot.WIDTH_HALF-3, y);
 
         // 画
-        if(null != slot && BucketSort.buckets !=null){
+        if(null != BucketSort.buckets){
             drawBucketLinked(BucketSort.buckets[slot.getPosition()], g);
         }
     }

@@ -46,7 +46,6 @@ public class BucketSort extends AbstractSortInterface {
         for (int i = 0; i < buckets.length; i++) {
             for (Node p = buckets[i].next; p != null; p = p.next){
                 swap(slots,pos,p.data.getPosition());
-                slots[pos].updatePosition(pos);
                 pos ++;
                 pause();
             }
