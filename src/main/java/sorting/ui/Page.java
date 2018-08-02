@@ -20,7 +20,7 @@ import java.util.concurrent.*;
  */
 public class Page {
 
-    private JFrame jFrame;
+    private JPanel displayPanel;
     private JButton button;
     private SortPanel sortPanel;
 
@@ -48,21 +48,21 @@ public class Page {
 
     /**
      *
-     * @param pageControl pageControl
+     * @param pageManage pageManage
      * @param className class name
      */
-    public Page(PageControl pageControl, String className) {
-        this(pageControl, className,"default");
+    public Page(PageManage pageManage, String className) {
+        this(pageManage, className,"default");
     }
 
     /**
      *
-     * @param pageControl
+     * @param pageManage
      * @param className
      * @param uiName
      */
-    public Page(PageControl pageControl, String className, String uiName) {
-        this.jFrame = pageControl.getjFrame();
+    public Page(PageManage pageManage, String className, String uiName) {
+        this.displayPanel = pageManage.getDisplayPanel().getContent();
         this.sortClassName = className;
         this.uiName = uiName;
         this.init();
@@ -85,7 +85,7 @@ public class Page {
         this.button.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                PageControl.SINGLE_STEP_THREAD.submit(new Runnable() {
+                PageManage.SINGLE_STEP_THREAD.submit(new Runnable() {
                     @Override
                     public void run() {
                         actionStep();
@@ -94,10 +94,10 @@ public class Page {
             }
         });
 
-        this.jFrame.add(this.sortPanel, BorderLayout.CENTER);
-        this.jFrame.add(this.button, BorderLayout.SOUTH);
+        this.displayPanel.add(this.sortPanel,BorderLayout.CENTER);
+        this.displayPanel.add(this.button, BorderLayout.SOUTH);
 
-        this.jFrame.revalidate();
+        this.displayPanel.revalidate();
 
     }
 
@@ -119,21 +119,24 @@ public class Page {
 
         stopScheduledFuture();
 
-        if(null != PageControl.SORTINT_THREAD){
-            PageControl.SORTINT_THREAD.execute(new Runnable() {
+        if(null != PageManage.SORTINT_THREAD){
+            PageManage.SORTINT_THREAD.execute(new Runnable() {
                 @Override
                 public void run() {
-                    sortPanel.setBars(generater.generate(SlotConst.SLOT_NUM));
-                    sortInterface.sort(sortPanel.getBars());
+                    sortPanel.setSlots(generater.generate(SlotConst.SLOT_NUM));
+                    sortInterface.sort(sortPanel.getSlots());
                 }
             });
         }
 
-        if (null == PageControl.AUTO_STEP_SORTING_THREAD){
+        if (null == PageManage.AUTO_STEP_SORTING_THREAD){
             return;
         }
 
-        scheduledFuture = PageControl.AUTO_STEP_SORTING_THREAD.scheduleAtFixedRate(new Runnable() {
+        if (period<100){
+            period = 100;
+        }
+        scheduledFuture = PageManage.AUTO_STEP_SORTING_THREAD.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 actionStep();
@@ -165,8 +168,8 @@ public class Page {
             this.sortPanel.invalidate();
             this.sortPanel.setVisible(false);
             this.sortPanel.removeAll();
-            this.jFrame.getContentPane().remove(this.sortPanel);
-            this.jFrame.getContentPane().remove(this.button);
+            this.displayPanel.remove(this.sortPanel);
+            this.displayPanel.remove(this.button);
         }
         this.sortPanel = null;
         this.button = null;
@@ -199,10 +202,12 @@ public class Page {
      * @return
      */
     private SortPanel createSlotPanel(String panelName){
+
         String name = "sorting.ui.SortPanel";
         if (  "bucketsort".equalsIgnoreCase(panelName)){
             name = "sorting.ui.BucketSortPanel";
         }
+
         Slot[] slots = generater.generate(SlotConst.SLOT_NUM);
         try {
             Class<?> aClass = Class.forName(name);

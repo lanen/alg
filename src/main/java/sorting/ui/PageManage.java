@@ -9,14 +9,13 @@ import java.util.concurrent.ScheduledExecutorService;
  * @author evan
  * create-date 2018/7/31
  */
-public class PageControl {
+public class PageManage {
 
     private Page current = null;
 
-    private JFrame jFrame;
-
     private String currnetName;
 
+    private SimpleSortDisplayPanel displayPanel;
 
     /**
      * 排序所在的线程
@@ -36,10 +35,10 @@ public class PageControl {
 
     /**
      *
-     * @param jFrame frame
+     * @param displayPanel frame
      */
-    public PageControl(JFrame jFrame) {
-        this.jFrame = jFrame;
+    public PageManage(SimpleSortDisplayPanel displayPanel) {
+        this.displayPanel = displayPanel;
     }
 
     public void switchPage(String name, boolean autoStep, int stepPeriod) {
@@ -58,14 +57,15 @@ public class PageControl {
         }
 
         current = new Page(this, "sorting.alg." + name);
-        //决定是否自动
-        if (autoStep){
+        // 决定是否自动
+        if (autoStep) {
             current.autoActionStep(stepPeriod);
         }
         this.currnetName = name;
     }
 
-    public JFrame getjFrame() {
-        return jFrame;
+    public SimpleSortDisplayPanel getDisplayPanel() {
+        return displayPanel;
     }
+
 }

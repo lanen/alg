@@ -12,26 +12,26 @@ import java.awt.*;
  */
 public class SortPanel extends JPanel {
 
-    private Slot[] bars;
+    private Slot[] slots;
 
-    public SortPanel(Slot[] bars) {
-        this.bars = bars;
+    public SortPanel(Slot[] slots) {
+        this.slots = slots;
     }
 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        for (int i = 0; i < bars.length; i++) {
-            g.setColor(bars[i].getColor());
-            g.fillRect(bars[i].x(SlotConst.UI_START_X), bars[i].y(SlotConst.UI_START_Y), bars[i].width(), bars[i].height());
+        for (int i = 0; i < slots.length; i++) {
+            g.setColor(slots[i].getColor());
+            g.fillRect(slots[i].x(SlotConst.UI_START_X), slots[i].y(SlotConst.UI_START_Y), slots[i].width(), slots[i].height());
         }
     }
 
-    public Slot[] getBars() {
-        return bars;
+    public Slot[] getSlots() {
+        return slots;
     }
 
-    public void setBars(Slot[] bars) {
-        this.bars = bars;
+    public void setSlots(Slot[] slots) {
+        this.slots = slots;
     }
 }
