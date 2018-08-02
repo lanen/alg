@@ -17,7 +17,7 @@ public class SortingUI {
         JFrame jFrame = new JFrame();
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         jFrame.setLayout(new BorderLayout());
-        jFrame.setSize(600,400);
+        jFrame.setSize(600,600);
 
         SimpleSortDisplayPanel displayPanel = new SimpleSortDisplayPanel();
         PageManage pageManage = new PageManage(displayPanel);

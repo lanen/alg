@@ -26,6 +26,7 @@ public class SimpleControlPanel  {
             "InsertionSort",
             "ShellInsertionSort",
             "MergeSort",
+            "BucketSort",
     };
 
     /**

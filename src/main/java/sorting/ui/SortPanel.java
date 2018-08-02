@@ -12,7 +12,7 @@ import java.awt.*;
  */
 public class SortPanel extends JPanel {
 
-    private Slot[] slots;
+    protected Slot[] slots;
 
     public SortPanel(Slot[] slots) {
         this.slots = slots;

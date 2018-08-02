@@ -1,6 +1,5 @@
 package sorting.ui;
 
-import javax.swing.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -56,7 +55,11 @@ public class PageManage {
             current.dispose();
         }
 
-        current = new Page(this, "sorting.alg." + name);
+        String uiName = "default";
+        if(name.equalsIgnoreCase("BucketSort")){
+            uiName = "bucketsort";
+        }
+        current = new Page(this, "sorting.alg." + name, uiName);
         // 决定是否自动
         if (autoStep) {
             current.autoActionStep(stepPeriod);
