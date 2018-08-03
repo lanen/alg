@@ -5,21 +5,19 @@ import sorting.ui.SimpleMain;
 import sorting.ui.SimpleSortDisplayPanel;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * 排序的UI呈现
  * @author evan
  * create-date 2018/7/31
  */
-public class SortingUI {
+public class SortingUI extends UI{
 
-    public static void main(String[] args) {
-        JFrame jFrame = new JFrame();
-        jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        jFrame.setLayout(new BorderLayout());
-        jFrame.setSize(600,600);
-
+    /**
+     *
+     * @return
+     */
+    protected SimpleMain createSimpleMain(){
         SimpleMain simpleMain = new SimpleMain();
 
         SimpleSortDisplayPanel displayPanel = new SimpleSortDisplayPanel();
@@ -30,13 +28,16 @@ public class SortingUI {
 
         simpleMain.getContent().setLeftComponent(simpleControlPanel.getContent());
         simpleMain.getContent().setRightComponent(displayPanel.getContent());
-//        jFrame.add(simpleControlPanel.getContent(), BorderLayout.WEST);
-//        jFrame.add(displayPanel.getContent(), BorderLayout.CENTER);
-        jFrame.add(simpleMain.getRoot());
-        //居中对齐
-        jFrame.setLocationRelativeTo(null);
-        jFrame.setTitle(Texts.TITLE);
-        jFrame.setVisible(true);
 
+        return simpleMain;
+    }
+
+    public static void main(String[] args) {
+
+        SortingUI sortingUI = new SortingUI();
+        JFrame jFrame = sortingUI.createJFrame(Texts.TITLE);
+
+        jFrame.add(sortingUI.createSimpleMain().getRoot());
+        jFrame.setVisible(true);
     }
 }
